@@ -225,7 +225,7 @@
     <string name="gt"><![CDATA[>]]></string>
     <string name="percent">%</string>
 
-    <string name="update_tip">如果你是跨版本更新到这个版本的，可以前往官网biliterminal.cn查看过往的更新日志。\n\n此版本的更新内容完全由爅峫开发，由于部分原因，未在安卓4设备进行测试，如遇到严重问题请降级回2.9.3-fix版本。\n这个版本的问题就不要去烦Robin了，Robin现在要专注学业了。\n\n由于Robin即将高三，此版本正式发布后一年内更新速度将会极慢，除非有api变动和大量崩溃之类的严重问题。</string>
+    <string name="update_tip">如果你是跨版本更新到这个版本的，可以前往官网biliterminal.cn查看过往的更新日志。\n\n此版本的更新内容完全由爅峫开发，未在安卓4设备进行测试，同时已知安卓4存在部分新增功能无法正常使用问题，如无法忍受请降级回2.9.3-fix版本。\n这个版本的问题就不要去烦Robin了，Robin现在要专注学业了。\n\n由于Robin即将高三，此版本正式发布后一年内更新速度将会极慢，除非有api变动和大量崩溃之类的严重问题。</string>
 
     #新增功能放到上面，修复问题放下面，方便用户看见
     <string-array name="update_log_items">
