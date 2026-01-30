@@ -616,4 +616,35 @@ public class DynamicApi {
                     .put("biz_id", biz_id == null ? "" : biz_id);
         }
     }
+
+    public static List<UpInfo> getRecentUpList() throws IOException, JSONException {
+        String url = "https://api.bilibili.com/x/polymer/web-dynamic/v1/portal";
+        JSONObject result = NetWorkUtil.getJson(url, NetWorkUtil.webHeaders);
+        if (result.getInt("code") != 0) throw new JSONException(result.getString("message"));
+        
+        List<UpInfo> upList = new ArrayList<>();
+        if (result.has("data") && !result.isNull("data")) {
+            JSONObject data = result.getJSONObject("data");
+            if (data.has("up_list") && !data.isNull("up_list")) {
+                JSONArray upListArray = data.getJSONArray("up_list");
+                for (int i = 0; i < upListArray.length(); i++) {
+                    JSONObject upJson = upListArray.getJSONObject(i);
+                    UpInfo upInfo = new UpInfo();
+                    upInfo.mid = upJson.getLong("mid");
+                    upInfo.uname = upJson.getString("uname");
+                    upInfo.face = upJson.getString("face");
+                    upInfo.has_update = upJson.optBoolean("has_update", false);
+                    upList.add(upInfo);
+                }
+            }
+        }
+        return upList;
+    }
+
+    public static class UpInfo {
+        public long mid;
+        public String uname;
+        public String face;
+        public boolean has_update;
+    }
 }
