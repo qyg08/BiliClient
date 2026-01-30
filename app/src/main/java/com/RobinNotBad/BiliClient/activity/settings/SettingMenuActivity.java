@@ -12,7 +12,7 @@ import com.google.android.material.switchmaterial.SwitchMaterial;
 
 public class SettingMenuActivity extends BaseActivity {
 
-    private SwitchMaterial menu_popular, menu_live, menu_precious, menu_timeline;
+    private SwitchMaterial menu_popular, menu_live, menu_precious, menu_ranking, menu_timeline;
 
     @SuppressLint("InflateParams")
     @Override
@@ -30,6 +30,9 @@ public class SettingMenuActivity extends BaseActivity {
             menu_precious = findViewById(R.id.menu_precious);
             menu_precious.setChecked(SharedPreferencesUtil.getBoolean("menu_precious", false));
 
+            menu_ranking = findViewById(R.id.menu_ranking);
+            menu_ranking.setChecked(SharedPreferencesUtil.getBoolean("menu_ranking", false));
+
             menu_timeline = findViewById(R.id.menu_timeline);
             menu_timeline.setChecked(SharedPreferencesUtil.getBoolean("menu_timeline", false));
 
@@ -44,6 +47,7 @@ public class SettingMenuActivity extends BaseActivity {
     private void save() {
         SharedPreferencesUtil.putBoolean("menu_popular", menu_popular.isChecked());
         SharedPreferencesUtil.putBoolean("menu_precious", menu_precious.isChecked());
+        SharedPreferencesUtil.putBoolean("menu_ranking", menu_ranking.isChecked());
         SharedPreferencesUtil.putBoolean("menu_live", menu_live.isChecked());
         SharedPreferencesUtil.putBoolean("menu_timeline", menu_timeline.isChecked());
     }

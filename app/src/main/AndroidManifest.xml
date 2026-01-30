@@ -447,6 +447,11 @@
             android:label="热门"
             android:screenOrientation="locked" />
         <activity
+            android:name=".activity.video.RankingActivity"
+            android:exported="true"
+            android:label="全站排行榜"
+            android:screenOrientation="locked" />
+        <activity
             android:name=".activity.video.RecommendActivity"
             android:exported="true"
             android:label="推荐"
