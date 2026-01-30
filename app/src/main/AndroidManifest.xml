@@ -391,6 +391,11 @@
             android:label="设置"
             android:screenOrientation="locked" />
         <activity
+            android:name=".activity.user.EditSignActivity"
+            android:exported="true"
+            android:label="修改描述"
+            android:screenOrientation="locked" />
+        <activity
             android:name=".activity.user.CreativeCenterActivity"
             android:exported="false"
             android:label="创作中心"

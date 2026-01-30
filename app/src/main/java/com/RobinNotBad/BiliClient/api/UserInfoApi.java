@@ -230,4 +230,15 @@ public class UserInfoApi {
         }
         return null;
     }
+
+    public static JSONObject updateUserSign(String userSign) throws IOException, JSONException {
+        String url = "https://api.bilibili.com/x/member/web/sign/update";
+        String csrf = NetWorkUtil.getInfoFromCookie("bili_jct", SharedPreferencesUtil.getString(SharedPreferencesUtil.cookies, ""));
+        String arg = "csrf=" + csrf;
+        if (userSign != null) {
+            arg += "&user_sign=" + java.net.URLEncoder.encode(userSign, "UTF-8");
+        }
+        JSONObject all = new JSONObject(Objects.requireNonNull(NetWorkUtil.post(url, arg, NetWorkUtil.webHeaders).body()).string());
+        return all;
+    }
 }
