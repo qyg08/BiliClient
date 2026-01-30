@@ -242,6 +242,7 @@
     <string-array name="update_log_items">
         <item>增加了大家投稿的彩蛋文本~</item>
         <item>增加了动态页面最近更新的UP主的开关并合并入滚动列表</item>
+        <item>增加了动态页面下拉刷新时一并刷新最近更新的UP列表</item>
     </string-array>
 
     <string name="tutorial_pager">提示\n\n←这个页面可以左右翻页喵→\n\n（共有%d页，滑动一下不再显示）</string>

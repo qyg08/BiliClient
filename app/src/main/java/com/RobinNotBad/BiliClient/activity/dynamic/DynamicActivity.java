@@ -185,6 +185,7 @@ public class DynamicActivity extends RefreshMainActivity {
             dynamicAdapter.notifyDataSetChanged();
         }
 
+        loadRecentUpList();
         addDynamic(type, true);
     }
 
