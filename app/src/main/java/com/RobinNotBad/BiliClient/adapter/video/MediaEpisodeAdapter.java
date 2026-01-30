@@ -1,6 +1,7 @@
 package com.RobinNotBad.BiliClient.adapter.video;
 
 import android.annotation.SuppressLint;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,7 +54,8 @@ public class MediaEpisodeAdapter extends RecyclerView.Adapter<MediaEpisodeAdapte
     @NonNull
     @Override
     public EpisodeHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
+        ContextThemeWrapper contextWrapper = new ContextThemeWrapper(parent.getContext(), R.style.Theme_BiliClient);
+        View view = LayoutInflater.from(contextWrapper)
                 .inflate(useVerticalLayout ? R.layout.cell_item_vertical : R.layout.cell_episode, parent, false);
         return new EpisodeHolder(view);
     }

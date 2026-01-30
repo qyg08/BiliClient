@@ -1,6 +1,7 @@
 package com.RobinNotBad.BiliClient.adapter;
 
 import android.annotation.SuppressLint;
+import android.view.ContextThemeWrapper;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,7 +55,8 @@ public class QualitySelectorAdapter extends RecyclerView.Adapter<QualitySelector
     @NonNull
     @Override
     public QualityHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext())
+        ContextThemeWrapper contextWrapper = new ContextThemeWrapper(parent.getContext(), R.style.Theme_BiliClient);
+        View view = LayoutInflater.from(contextWrapper)
                 .inflate(R.layout.cell_episode, parent, false);
         return new QualityHolder(view);
     }
