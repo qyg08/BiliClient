@@ -30,6 +30,27 @@ public class FavoriteApi {
         JSONObject result = NetWorkUtil.getJson(url);
         JSONObject data = result.getJSONObject("data");
         ArrayList<FavoriteFolder> folderList = new ArrayList<>();
+        java.util.Map<Long, Long> fidToMediaIdMap = new java.util.HashMap<>();
+        
+        try {
+            String v3Url = "https://api.bilibili.com/x/v3/fav/folder/created/list-all?type=2&up_mid=" + mid;
+            JSONObject v3Result = NetWorkUtil.getJson(v3Url);
+            JSONObject v3Data = v3Result.optJSONObject("data");
+            if (v3Data != null && v3Data.has("list") && !v3Data.isNull("list")) {
+                JSONArray v3List = v3Data.getJSONArray("list");
+                for (int j = 0; j < v3List.length(); j++) {
+                    JSONObject v3Folder = v3List.getJSONObject(j);
+                    long v3Fid = v3Folder.optLong("fid", 0);
+                    long v3MediaId = v3Folder.optLong("id", 0);
+                    if (v3Fid > 0 && v3MediaId > 0) {
+                        fidToMediaIdMap.put(v3Fid, v3MediaId);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            Log.e("debug-获取mediaId失败", e.getMessage());
+        }
+        
         if (data.has("list") && !data.isNull("list")) {
             JSONArray list = data.getJSONArray("list");
             for (int i = 0; i < list.length(); i++) {
@@ -46,7 +67,15 @@ public class FavoriteApi {
 
                 favoriteFolder.videoCount = folder.getInt("count");
                 favoriteFolder.maxCount = folder.getInt("max_count");
+                favoriteFolder.isDefault = (i == 0 || favoriteFolder.id == 0);
+                
+                Long mediaId = fidToMediaIdMap.get(favoriteFolder.id);
+                if (mediaId != null) {
+                    favoriteFolder.mediaId = mediaId;
+                }
+                
                 Log.e("debug-收藏夹ID", String.valueOf(favoriteFolder.id));
+                Log.e("debug-收藏夹mediaId", String.valueOf(favoriteFolder.mediaId));
                 Log.e("debug-收藏夹名称", favoriteFolder.name);
                 Log.e("debug-收藏夹封面", favoriteFolder.cover);
                 Log.e("debug-收藏夹视频数量", String.valueOf(favoriteFolder.videoCount));
@@ -181,6 +210,44 @@ public class FavoriteApi {
 
         JSONObject result = new JSONObject(Objects.requireNonNull(NetWorkUtil.post(url, per, NetWorkUtil.webHeaders).body()).string());
         Log.e("debug-删除收藏", result.toString());
+        return result.getInt("code");
+    }
+
+    public static int addFolder(String title, String intro, int privacy) throws IOException, JSONException {
+        String url = "https://api.bilibili.com/x/v3/fav/folder/add";
+        NetWorkUtil.FormData formData = new NetWorkUtil.FormData()
+                .put("title", title)
+                .put("intro", intro != null ? intro : "")
+                .put("privacy", privacy)
+                .put("csrf", SharedPreferencesUtil.getString("csrf", ""));
+        String data = formData.toString();
+        JSONObject result = new JSONObject(Objects.requireNonNull(NetWorkUtil.post(url, data, NetWorkUtil.webHeaders).body()).string());
+        Log.e("debug-新建收藏夹", result.toString());
+        return result.getInt("code");
+    }
+
+    public static int editFolder(long mediaId, String title, String intro, int privacy) throws IOException, JSONException {
+        String url = "https://api.bilibili.com/x/v3/fav/folder/edit";
+        NetWorkUtil.FormData formData = new NetWorkUtil.FormData()
+                .put("media_id", mediaId)
+                .put("title", title)
+                .put("intro", intro != null ? intro : "")
+                .put("privacy", privacy)
+                .put("csrf", SharedPreferencesUtil.getString("csrf", ""));
+        String data = formData.toString();
+        JSONObject result = new JSONObject(Objects.requireNonNull(NetWorkUtil.post(url, data, NetWorkUtil.webHeaders).body()).string());
+        Log.e("debug-修改收藏夹", result.toString());
+        return result.getInt("code");
+    }
+
+    public static int deleteFolder(long mediaId) throws IOException, JSONException {
+        String url = "https://api.bilibili.com/x/v3/fav/folder/del";
+        NetWorkUtil.FormData formData = new NetWorkUtil.FormData()
+                .put("media_ids", String.valueOf(mediaId))
+                .put("csrf", SharedPreferencesUtil.getString("csrf", ""));
+        String data = formData.toString();
+        JSONObject result = new JSONObject(Objects.requireNonNull(NetWorkUtil.post(url, data, NetWorkUtil.webHeaders).body()).string());
+        Log.e("debug-删除收藏夹", result.toString());
         return result.getInt("code");
     }
 
