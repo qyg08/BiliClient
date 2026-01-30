@@ -91,6 +91,16 @@
         <item>她是一串虚无缥缈的代码，我是一堆毫无意义的有机物。我们绝配！\n\n她不只是代码，是显示器、运算器、存储器、控制器的联合运转；\n我也不只是物质，是核酸、蛋白质、矿物质、碳水化合物的相互作用；\n——我是说，事物倾注了感情，便流淌着生命。\n\n当我对一段代码倾尽了感情时，她便不再是一段代码！\n\n#来源：网络\n#投稿者：RobinNotBad</item>
         <item>愿枕星河入睡，愿拥明月共眠。\n\n#来源：网络\n#投稿者…RobinNotBad和纳西妲？\n\n妲厨在这里偷偷夹带点私货应该没问题吧（反正不会有人看见\n\n如果真的有人看见了这个，就请在搜索栏中输入“Robin 纳西妲”试试吧</item>
         <item>你好啊，某位不知名的朋友。\n你是为何翻到这里的呢?\n是发自内心的无聊，还是身体上的疲惫呢?\n不管是什么，请接受来自小灰的这个衷心的抱抱!\n希望这个抱抱可以缓解你的孤独，缓解你的疲惫，可以缓解你的无聊!\n如果你觉得很累的话，就请休息一下吧，也许休息一下过后一切都会迎刃而解的!\nawa\n\n#投稿者：某只笨蛋的小灰</item>
+        <item>如果生命进入了倒计时，就请让她像绚丽的烟火一样绽放吧。\n\n#投稿者：热热的凉菜</item>
+        <item>这个世界虽不美好，但只有书写自己的故事，自我认同，才能获得新生！ \n#写给TJX\n\n#投稿者：夏天里的山日</item>
+        <item>世界既不黑也不白，而是一道精致的灰\n——英雄联盟 卡密尔\n有人说我是过了河的卒子，无法回头了，可有些棋子，这辈子也过不了河\n\n#投稿者：被暴打的悬悬</item>
+        <item>Android12--最便携的搞机版本，平民化、单机化的开始(个人观点)\n\n#投稿者##数据丢失##</item>
+        <item>世界向左，哈夫克向右，但是无论你选择哪一方，请谨记，G.T.I.服务于所有国家\n\n#投稿者：澜澈LanChe</item>
+        <item>我宁愿被遗忘，\n也不愿被定义。\n#献给奥赫玛第一任也是最后一任女皇——刻律德菈\n\n#投稿者##数据丢失##</item>
+        <item>我们不能改变从前，但是可以过好现在，谢谢终端陪我喵，宝宝们天天开心\n\n#投稿者：汉堡鸭</item>
+        <item>凑妈可爱捏\n\n#投稿者：虚空过山车</item>
+        <item>Don\'t care about worldly eyes. Go and pursue your own light\n不必在意世俗的眼光，去追寻属于你的光。\n\n#投稿者：玖拾玖玖玖</item>
+        <item>Knock knock!Let me go in and get the ace.\nYou\'ll paint your face with tears that don\'t feel the same.\nNow Heart Reinforce\'s up to end this game.\nYou\'d better give up and throw your MP5 away\n咚咚！让我进去拿王牌。你会用不一样的眼泪涂在脸上。现在心脏强化要结束这场比赛了。你最好放弃，把你的MP5扔掉.\n-《ヒバナ》\n\n#投稿者：ハロー、ワールド!</item>
 
         <item>呐呐？这里没有更多彩蛋了呢＞﹏＜\n\n欢迎你的投稿哦？</item>
     </string-array>
@@ -229,11 +239,7 @@
 
     #新增功能放到上面，修复问题放下面，方便用户看见
     <string-array name="update_log_items">
-        <item>增加了动态页面顶部的最近更新的UP主展示</item>
-        <item>增加了互动视频选项字体大小设置项</item>
-        <item>修复了部分情况下互动视频变量无法正常判断的问题</item>
-        <item>修复了内置播放器的部分功能在安卓4.4报错的问题</item>
-        <item>优化了用户动态查看时的风控情况</item>
+        <item>增加了大家投稿的彩蛋文本~</item>
     </string-array>
 
     <string name="tutorial_pager">提示\n\n←这个页面可以左右翻页喵→\n\n（共有%d页，滑动一下不再显示）</string>
