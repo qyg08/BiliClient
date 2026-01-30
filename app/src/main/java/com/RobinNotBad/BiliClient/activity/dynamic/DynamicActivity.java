@@ -9,15 +9,12 @@ import android.util.Log;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.RobinNotBad.BiliClient.R;
 import com.RobinNotBad.BiliClient.activity.base.BaseActivity;
 import com.RobinNotBad.BiliClient.activity.base.RefreshMainActivity;
 import com.RobinNotBad.BiliClient.adapter.dynamic.DynamicAdapter;
 import com.RobinNotBad.BiliClient.adapter.dynamic.DynamicHolder;
-import com.RobinNotBad.BiliClient.adapter.dynamic.RecentUpAdapter;
 import com.RobinNotBad.BiliClient.api.DynamicApi;
 import com.RobinNotBad.BiliClient.helper.TutorialHelper;
 import com.RobinNotBad.BiliClient.model.Dynamic;
@@ -39,8 +36,7 @@ public class DynamicActivity extends RefreshMainActivity {
 
     private ArrayList<Dynamic> dynamicList;
     private DynamicAdapter dynamicAdapter;
-    private RecyclerView recentUpRecyclerView;
-    private RecentUpAdapter recentUpAdapter;
+    private List<DynamicApi.UpInfo> recentUpList;
     private long offset = 0;
     private boolean firstRefresh = true;
     private String type = "all";
@@ -166,10 +162,6 @@ public class DynamicActivity extends RefreshMainActivity {
         setMenuClick();
         Log.e("debug", "进入动态页");
 
-        recentUpRecyclerView = findViewById(R.id.recentUpRecyclerView);
-        recentUpRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        recentUpRecyclerView.setVisibility(android.view.View.GONE);
-
         setOnRefreshListener(this::refreshDynamic);
         setOnLoadMoreListener(page -> addDynamic(type));
 
@@ -214,13 +206,14 @@ public class DynamicActivity extends RefreshMainActivity {
                     dynamicList.addAll(list);
                     if (firstRefresh) {
                         firstRefresh = false;
-                        dynamicAdapter = new DynamicAdapter(this, dynamicList, recyclerView);
+                        dynamicAdapter = new DynamicAdapter(this, dynamicList, recyclerView, recentUpList);
                         setAdapter(dynamicAdapter);
                     } else {
                         if (refresh) {
                             dynamicAdapter.notifyDataSetChanged();
                         } else {
-                            dynamicAdapter.notifyItemRangeInserted(dynamicList.size() - list.size() + 1, list.size());
+                            int offset = showRecentUp() ? 2 : 1;
+                            dynamicAdapter.notifyItemRangeInserted(dynamicList.size() - list.size() + offset, list.size());
                         }
                     }
                     if (refresh) {
@@ -237,20 +230,33 @@ public class DynamicActivity extends RefreshMainActivity {
     private void loadRecentUpList() {
         CenterThreadPool.run(() -> {
             try {
-                List<DynamicApi.UpInfo> upList = DynamicApi.getRecentUpList();
+                recentUpList = DynamicApi.getRecentUpList();
                 runOnUiThread(() -> {
-                    if (upList != null && !upList.isEmpty()) {
-                        recentUpAdapter = new RecentUpAdapter(this, upList);
-                        recentUpRecyclerView.setAdapter(recentUpAdapter);
-                        recentUpRecyclerView.setVisibility(android.view.View.VISIBLE);
-                    } else {
-                        recentUpRecyclerView.setVisibility(android.view.View.GONE);
+                    if (dynamicAdapter != null) {
+                        dynamicAdapter.recentUpList = recentUpList;
+                        boolean shouldShow = showRecentUp();
+                        int currentItemCount = dynamicAdapter.getItemCount();
+                        int newItemCount = (dynamicList != null ? dynamicList.size() + 1 : 1) + (shouldShow ? 1 : 0);
+                        if (currentItemCount != newItemCount) {
+                            if (shouldShow) {
+                                dynamicAdapter.notifyItemInserted(1);
+                            } else {
+                                dynamicAdapter.notifyItemRemoved(1);
+                            }
+                        } else if (shouldShow) {
+                            dynamicAdapter.notifyItemChanged(1);
+                        }
                     }
                 });
             } catch (Exception e) {
-                runOnUiThread(() -> recentUpRecyclerView.setVisibility(android.view.View.GONE));
+                recentUpList = null;
             }
         });
+    }
+
+    private boolean showRecentUp() {
+        return SharedPreferencesUtil.getBoolean(SharedPreferencesUtil.RECENT_UP_DISPLAY_ENABLE, true)
+                && recentUpList != null && !recentUpList.isEmpty();
     }
 
     @Override
@@ -259,7 +265,12 @@ public class DynamicActivity extends RefreshMainActivity {
         if (requestCode == DynamicHolder.GO_TO_INFO_REQUEST && resultCode == RESULT_OK) {
             try {
                 if (data != null && !isRefreshing) {
-                    DynamicHolder.removeDynamicFromList(dynamicList, data.getIntExtra("position", 0) - 1, dynamicAdapter);
+                    int adapterPosition = data.getIntExtra("position", 0);
+                    int offset = showRecentUp() ? 2 : 1;
+                    int realPosition = adapterPosition - offset;
+                    if (realPosition >= 0 && realPosition < dynamicList.size()) {
+                        DynamicHolder.removeDynamicFromList(dynamicList, realPosition, dynamicAdapter, showRecentUp());
+                    }
                 }
             } catch (Throwable ignored) {
             }

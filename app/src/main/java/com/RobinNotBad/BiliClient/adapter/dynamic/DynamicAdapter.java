@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.RobinNotBad.BiliClient.R;
@@ -16,7 +17,9 @@ import com.RobinNotBad.BiliClient.activity.ListChooseActivity;
 import com.RobinNotBad.BiliClient.activity.dynamic.DynamicActivity;
 import com.RobinNotBad.BiliClient.activity.dynamic.send.SendDynamicActivity;
 import com.RobinNotBad.BiliClient.activity.live.FollowLiveActivity;
+import com.RobinNotBad.BiliClient.api.DynamicApi;
 import com.RobinNotBad.BiliClient.model.Dynamic;
+import com.RobinNotBad.BiliClient.util.SharedPreferencesUtil;
 import com.google.android.material.button.MaterialButton;
 
 import java.util.ArrayList;
@@ -33,18 +36,31 @@ public class DynamicAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
     final RecyclerView recyclerView;
     final DynamicActivity dynamicActivity;
     final ActivityResultLauncher<Intent> writeDynamicLauncher;
+    public List<DynamicApi.UpInfo> recentUpList;
 
-    public DynamicAdapter(Context context, List<Dynamic> dynamicList, RecyclerView recyclerView) {
+    public DynamicAdapter(Context context, List<Dynamic> dynamicList, RecyclerView recyclerView, List<DynamicApi.UpInfo> recentUpList) {
         this.context = context;
         this.dynamicList = dynamicList;
         this.recyclerView = recyclerView;
         dynamicActivity = (DynamicActivity) context;
         this.writeDynamicLauncher = dynamicActivity.writeDynamicLauncher;
+        this.recentUpList = recentUpList;
+    }
+
+    private boolean showRecentUp() {
+        return SharedPreferencesUtil.getBoolean(SharedPreferencesUtil.RECENT_UP_DISPLAY_ENABLE, true)
+                && recentUpList != null && !recentUpList.isEmpty();
     }
 
     @Override
     public int getItemViewType(int position) {
-        return (position == 0 ? 0 : 1);
+        if (position == 0) {
+            return 0;
+        } else if (position == 1 && showRecentUp()) {
+            return 2;
+        } else {
+            return 1;
+        }
     }
 
     @NonNull
@@ -53,6 +69,9 @@ public class DynamicAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
         if (viewType == 0) {
             View view = LayoutInflater.from(this.context).inflate(R.layout.cell_dynamic_action, parent, false);
             return new WriteDynamic(view);
+        } else if (viewType == 2) {
+            View view = LayoutInflater.from(this.context).inflate(R.layout.cell_recent_up_list, parent, false);
+            return new RecentUpListHolder(view);
         } else {
             return new DynamicHolder(LayoutInflater.from(this.context).inflate(R.layout.cell_dynamic, parent, false),
                     dynamicActivity, false);
@@ -76,8 +95,15 @@ public class DynamicAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
                 Intent intent = new Intent(context, FollowLiveActivity.class);
                 context.startActivity(intent);
             });
+        } else if (holder instanceof RecentUpListHolder) {
+            RecentUpListHolder recentUpListHolder = (RecentUpListHolder) holder;
+            if (recentUpListHolder.recentUpAdapter == null) {
+                recentUpListHolder.recentUpRecyclerView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false));
+                recentUpListHolder.recentUpAdapter = new RecentUpAdapter(context, recentUpList);
+                recentUpListHolder.recentUpRecyclerView.setAdapter(recentUpListHolder.recentUpAdapter);
+            }
         } else if (holder instanceof DynamicHolder) {
-            int realPosition = position - 1;
+            int realPosition = position - (showRecentUp() ? 2 : 1);
             if (realPosition < 0 || realPosition >= dynamicList.size())
                 return;
 
@@ -100,7 +126,7 @@ public class DynamicAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             }
 
             View.OnLongClickListener onDeleteLongClick = DynamicHolder.getDeleteListener(dynamicActivity, dynamicList,
-                    realPosition, this);
+                    realPosition, this, showRecentUp());
             dynamicHolder.item_dynamic_delete.setOnLongClickListener(onDeleteLongClick);
             if (dynamic.canDelete)
                 dynamicHolder.item_dynamic_delete.setVisibility(View.VISIBLE);
@@ -114,7 +140,8 @@ public class DynamicAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
 
     @Override
     public int getItemCount() {
-        return dynamicList != null ? dynamicList.size() + 1 : 1;
+        int baseCount = dynamicList != null ? dynamicList.size() + 1 : 1;
+        return showRecentUp() ? baseCount + 1 : baseCount;
     }
 
     public static class WriteDynamic extends RecyclerView.ViewHolder {
@@ -125,6 +152,16 @@ public class DynamicAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder
             write_dynamic = itemView.findViewById(R.id.write_dynamic);
             type = itemView.findViewById(R.id.type);
             live = itemView.findViewById(R.id.live);
+        }
+    }
+
+    public static class RecentUpListHolder extends RecyclerView.ViewHolder {
+        final RecyclerView recentUpRecyclerView;
+        RecentUpAdapter recentUpAdapter;
+
+        public RecentUpListHolder(@NonNull View itemView) {
+            super(itemView);
+            recentUpRecyclerView = itemView.findViewById(R.id.recentUpRecyclerView);
         }
     }
 }

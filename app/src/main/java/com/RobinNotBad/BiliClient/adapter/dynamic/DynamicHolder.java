@@ -105,13 +105,24 @@ public class DynamicHolder extends RecyclerView.ViewHolder {
 
     public static void removeDynamicFromList(List<Dynamic> dynamicList, int finalPosition,
                                              RecyclerView.Adapter<RecyclerView.ViewHolder> adapter) {
+        removeDynamicFromList(dynamicList, finalPosition, adapter, false);
+    }
+
+    public static void removeDynamicFromList(List<Dynamic> dynamicList, int finalPosition,
+                                             RecyclerView.Adapter<RecyclerView.ViewHolder> adapter, boolean showRecentUp) {
         dynamicList.remove(finalPosition);
-        adapter.notifyItemRemoved(finalPosition + 1);
-        adapter.notifyItemRangeChanged(finalPosition + 1, dynamicList.size() - finalPosition);
+        int offset = showRecentUp ? 2 : 1;
+        adapter.notifyItemRemoved(finalPosition + offset);
+        adapter.notifyItemRangeChanged(finalPosition + offset, dynamicList.size() - finalPosition);
     }
 
     public static View.OnLongClickListener getDeleteListener(Activity dynamicActivity, List<Dynamic> dynamicList,
                                                              int finalPosition, RecyclerView.Adapter<RecyclerView.ViewHolder> adapter) {
+        return getDeleteListener(dynamicActivity, dynamicList, finalPosition, adapter, false);
+    }
+
+    public static View.OnLongClickListener getDeleteListener(Activity dynamicActivity, List<Dynamic> dynamicList,
+                                                             int finalPosition, RecyclerView.Adapter<RecyclerView.ViewHolder> adapter, boolean showRecentUp) {
         return new View.OnLongClickListener() {
             private int longClickPosition = -1;
             private long longClickTime = -1;
@@ -127,8 +138,9 @@ public class DynamicHolder extends RecyclerView.ViewHolder {
                                 if (result == 0) {
                                     dynamicList.remove(finalPosition);
                                     dynamicActivity.runOnUiThread(() -> {
-                                        adapter.notifyItemRemoved(finalPosition + 1);
-                                        adapter.notifyItemRangeChanged(finalPosition + 1,
+                                        int offset = showRecentUp ? 2 : 1;
+                                        adapter.notifyItemRemoved(finalPosition + offset);
+                                        adapter.notifyItemRangeChanged(finalPosition + offset,
                                                 dynamicList.size() - finalPosition);
                                         longClickPosition = -1;
                                         MsgUtil.showMsg("删除成功~");
