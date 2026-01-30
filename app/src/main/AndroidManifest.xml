@@ -314,6 +314,16 @@
             android:label="登录记录"
             android:screenOrientation="locked" />
         <activity
+            android:name=".activity.user.CoinLogActivity"
+            android:exported="false"
+            android:label="硬币变化记录"
+            android:screenOrientation="locked" />
+        <activity
+            android:name=".activity.user.ExpLogActivity"
+            android:exported="false"
+            android:label="经验变化记录"
+            android:screenOrientation="locked" />
+        <activity
             android:name=".activity.user.WatchLaterActivity"
             android:exported="false"
             android:label="稍后再看"
