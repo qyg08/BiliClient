@@ -92,6 +92,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.regex.Pattern;
 import java.util.zip.Inflater;
 
 import master.flame.danmaku.controller.DrawHandler;
@@ -2771,16 +2772,24 @@ public class PlayerActivity extends Activity implements IjkMediaPlayer.OnPrepare
     }
 
     private boolean evaluateCondition(String condition) {
-        if (interactionData == null || interactionData.hiddenVars == null) {
+        if (interactionData == null || interactionData.hiddenVars == null || condition == null || condition.isEmpty()) {
             return true;
         }
         
         try {
+            String result = condition;
             for (InteractionVideoData.InteractionHiddenVar var : interactionData.hiddenVars) {
-                condition = condition.replace(var.idV2, String.valueOf(var.value));
+                if (var.idV2 != null && !var.idV2.isEmpty()) {
+                    String pattern = "\\b" + Pattern.quote(var.idV2) + "\\b";
+                    result = result.replaceAll(pattern, String.valueOf(var.value));
+                }
+                if (var.id != null && !var.id.isEmpty() && !var.id.equals(var.idV2)) {
+                    String pattern = "\\b" + Pattern.quote(var.id) + "\\b";
+                    result = result.replaceAll(pattern, String.valueOf(var.value));
+                }
             }
             
-            return evaluateExpression(condition);
+            return evaluateExpression(result);
         } catch (Exception e) {
             Logu.e("互动视频", "条件判断失败: " + e.getMessage());
             return true;
@@ -3029,7 +3038,8 @@ public class PlayerActivity extends Activity implements IjkMediaPlayer.OnPrepare
                         long value = evaluateValueExpression(valueExpr);
                         
                         for (InteractionVideoData.InteractionHiddenVar var : interactionData.hiddenVars) {
-                            if (var.idV2.equals(varId)) {
+                            if ((var.idV2 != null && var.idV2.equals(varId)) || 
+                                (var.id != null && var.id.equals(varId))) {
                                 var.value = value;
                                 break;
                             }
@@ -3062,7 +3072,8 @@ public class PlayerActivity extends Activity implements IjkMediaPlayer.OnPrepare
             } else {
                 if (interactionData != null && interactionData.hiddenVars != null) {
                     for (InteractionVideoData.InteractionHiddenVar var : interactionData.hiddenVars) {
-                        if (expr.equals(var.idV2)) {
+                        if ((var.idV2 != null && expr.equals(var.idV2)) || 
+                            (var.id != null && expr.equals(var.id))) {
                             return var.value;
                         }
                     }

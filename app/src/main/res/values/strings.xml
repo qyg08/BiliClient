@@ -230,6 +230,7 @@
     #新增功能放到上面，修复问题放下面，方便用户看见
     <string-array name="update_log_items">
         <item>增加了动态页面顶部的最近更新的UP主展示</item>
+        <item>修复了部分情况下互动视频变量无法正常判断的问题</item>
         <item>修复了内置播放器的部分功能在安卓4.4报错的问题</item>
     </string-array>
 
