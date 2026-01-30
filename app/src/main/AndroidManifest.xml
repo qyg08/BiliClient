@@ -442,6 +442,11 @@
             android:label="推荐"
             android:screenOrientation="locked" />
         <activity
+            android:name=".activity.video.TimelineActivity"
+            android:exported="false"
+            android:label="时间线"
+            android:screenOrientation="locked" />
+        <activity
             android:name=".activity.settings.login.LoginActivity"
             android:exported="true"
             android:label="登录"

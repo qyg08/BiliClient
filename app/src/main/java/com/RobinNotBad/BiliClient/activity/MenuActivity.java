@@ -27,6 +27,7 @@ import com.RobinNotBad.BiliClient.activity.user.MySpaceActivity;
 import com.RobinNotBad.BiliClient.activity.video.PopularActivity;
 import com.RobinNotBad.BiliClient.activity.video.PreciousActivity;
 import com.RobinNotBad.BiliClient.activity.video.RecommendActivity;
+import com.RobinNotBad.BiliClient.activity.video.TimelineActivity;
 import com.RobinNotBad.BiliClient.activity.video.local.LocalListActivity;
 import com.RobinNotBad.BiliClient.util.SharedPreferencesUtil;
 import com.bumptech.glide.Glide;
@@ -57,6 +58,7 @@ public class MenuActivity extends BaseActivity {
         put("popular", new Pair<>("热门", PopularActivity.class));
         put("precious", new Pair<>("入站必刷", PreciousActivity.class));
         put("live", new Pair<>("直播", RecommendLiveActivity.class));
+        put("timeline", new Pair<>("时间线", TimelineActivity.class));
         put("search", new Pair<>("搜索", SearchActivity.class));
         put("dynamic", new Pair<>("动态", DynamicActivity.class));
         put("myspace", new Pair<>("我的", MySpaceActivity.class));
@@ -121,6 +123,7 @@ public class MenuActivity extends BaseActivity {
         if (!SharedPreferencesUtil.getBoolean("menu_popular", true)) btnList.remove("popular");
         if (!SharedPreferencesUtil.getBoolean("menu_precious", false)) btnList.remove("precious");
         if (!SharedPreferencesUtil.getBoolean("menu_live", false)) btnList.remove("live");
+        if (!SharedPreferencesUtil.getBoolean("menu_timeline", false)) btnList.remove("timeline");
 
         btnList.add("exit"); //如果你希望用户手动把退出按钮排到第一个（
 
@@ -229,6 +232,7 @@ public class MenuActivity extends BaseActivity {
             add("popular");
             add("precious");
             add("live");
+            add("timeline");
             add("search");
             add("dynamic");
             add("myspace");
