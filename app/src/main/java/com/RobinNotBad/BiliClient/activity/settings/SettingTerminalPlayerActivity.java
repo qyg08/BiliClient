@@ -21,6 +21,8 @@ public class SettingTerminalPlayerActivity extends RefreshListActivity {
         final List<SettingSection> sectionList = new ArrayList<>() {
             {
                 add(new SettingSection("switch", "长按倍速", "player_longclick", "", "true"));
+                add(new SettingSection("switch", "双击快进快退", "player_doubletap_seek", "", "false"));
+                add(new SettingSection("input_int", "快进快退秒数", "player_doubletap_seek_seconds", "", "10"));
                 add(new SettingSection("switch", "洗脑循环", "player_loop", "", "false"));
                 add(new SettingSection("switch", "熄屏继续播放", "player_background", "", "false"));
                 add(new SettingSection("switch", "默认横屏", "player_autolandscape", "", "false"));

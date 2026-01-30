@@ -23,6 +23,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 import android.util.DisplayMetrics;
+import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -172,6 +173,7 @@ public class PlayerActivity extends Activity implements IjkMediaPlayer.OnPrepare
 
     private ScaleGestureDetector scaleGestureDetector;
     private ViewScaleGestureListener scaleGestureListener;
+    private GestureDetector doubleTapGestureDetector;
     private float previousX, previousY;
     private boolean gesture_moved, gesture_scaled, gesture_click_disabled;
     private float video_origX, video_origY;
@@ -461,13 +463,52 @@ public class PlayerActivity extends Activity implements IjkMediaPlayer.OnPrepare
 
     @SuppressLint("ClickableViewAccessibility")
     private void setVideoGestures() {
+        boolean doubleTapSeekEnabled = SharedPreferencesUtil.getBoolean("player_doubletap_seek", false);
+        int doubleTapSeekSeconds = SharedPreferencesUtil.getInt("player_doubletap_seek_seconds", 10);
+        
+        if (doubleTapSeekEnabled) {
+            doubleTapGestureDetector = new GestureDetector(this, new GestureDetector.SimpleOnGestureListener() {
+                @Override
+                public boolean onDoubleTap(MotionEvent e) {
+                    if (ijkPlayer != null && isPrepared && !isLiveMode) {
+                        float x = e.getX();
+                        float viewWidth = layout_control.getWidth();
+                        long currentPosition = ijkPlayer.getCurrentPosition();
+                        long seekOffset = doubleTapSeekSeconds * 1000L;
+                        
+                        gesture_click_disabled = true;
+                        
+                        if (x > viewWidth / 2.0f) {
+                            long newPosition = currentPosition + seekOffset;
+                            long duration = ijkPlayer.getDuration();
+                            if (newPosition > duration) {
+                                newPosition = duration;
+                            }
+                            seekToPosition(newPosition);
+                        } else {
+                            long newPosition = currentPosition - seekOffset;
+                            if (newPosition < 0) {
+                                newPosition = 0;
+                            }
+                            seekToPosition(newPosition);
+                        }
+                        return true;
+                    }
+                    return false;
+                }
+            });
+        }
+        
         if (SharedPreferencesUtil.getBoolean("player_scale", true)) {
             scaleGestureListener = new ViewScaleGestureListener(layout_video);
             scaleGestureDetector = new ScaleGestureDetector(this, scaleGestureListener);
 
-            boolean doublemove_enabled = SharedPreferencesUtil.getBoolean("player_doublemove", true); // 是否启用双指移动
+            boolean doublemove_enabled = SharedPreferencesUtil.getBoolean("player_doublemove", true);
 
             layout_control.setOnTouchListener((v, event) -> {
+                if (doubleTapSeekEnabled && doubleTapGestureDetector != null) {
+                    doubleTapGestureDetector.onTouchEvent(event);
+                }
                 int action = event.getActionMasked();
                 int pointerCount = event.getPointerCount();
                 boolean singleTouch = pointerCount == 1;
@@ -563,6 +604,9 @@ public class PlayerActivity extends Activity implements IjkMediaPlayer.OnPrepare
             });
         } else {
             layout_control.setOnTouchListener((view, motionEvent) -> {
+                if (doubleTapSeekEnabled && doubleTapGestureDetector != null) {
+                    doubleTapGestureDetector.onTouchEvent(motionEvent);
+                }
                 if (motionEvent.getAction() == MotionEvent.ACTION_UP && onLongClick) {
                     onLongClick = false;
                     float normalSpeed = speed_values[seekbar_speed.getProgress()];
