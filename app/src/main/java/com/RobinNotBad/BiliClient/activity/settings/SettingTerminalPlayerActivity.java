@@ -88,6 +88,7 @@ public class SettingTerminalPlayerActivity extends RefreshListActivity {
                         "", "true"));
                 add(new SettingSection("switch", "显示分P按钮", "player_ui_showPageBtn",
                         "", "true"));
+                add(new SettingSection("input_float", "互动选项字体大小", "player_interaction_choice_size", "", "17.0"));
             }
         };
 

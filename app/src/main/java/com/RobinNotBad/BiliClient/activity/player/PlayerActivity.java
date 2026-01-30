@@ -2749,6 +2749,8 @@ public class PlayerActivity extends Activity implements IjkMediaPlayer.OnPrepare
     private TextView createChoiceView(InteractionVideoData.InteractionChoice choice) {
         TextView choiceView = (TextView) LayoutInflater.from(this).inflate(R.layout.cell_interaction_choice, null);
         choiceView.setText(choice.option);
+        float fontSize = SharedPreferencesUtil.getFloat("player_interaction_choice_size", 17.0f);
+        choiceView.setTextSize(fontSize);
         choiceView.setOnClickListener(v -> handleChoiceSelection(choice));
         return choiceView;
     }
